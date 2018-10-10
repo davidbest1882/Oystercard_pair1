@@ -1,6 +1,7 @@
 require './lib/oystercard'
 
 describe Oystercard do
+  let(:station) { double :station }
 
   it "checks for existance of oystercard" do
     expect(subject).to be_instance_of(Oystercard)
@@ -32,7 +33,7 @@ describe Oystercard do
 
   it 'can touch in' do
     subject.top_up(Oystercard::MAX_BALANCE)
-    subject.touch_in
+    subject.touch_in(station)
     expect(subject).to be_in_journey
   end
 
@@ -43,7 +44,17 @@ describe Oystercard do
 
   it 'has minimum balance of 1 for a journey' do
 #    context 'balance is less than 1'
-    expect{subject.touch_in}.to raise_error "Minimum balance of #{Oystercard::MIN_BALANCE} not met"
+    expect{subject.touch_in(station)}.to raise_error "Minimum balance of #{Oystercard::MIN_BALANCE} not met"
   end
+
+  it 'stores the entry station' do
+    subject.top_up(20)
+    subject.touch_in(station)
+    expect(subject.entry_station).to eq station
+  end
+  # it 'when I touch in it returns where I travelled from' do
+  #   subject.top_up(5)
+  #   expect(subject.touch_in(station)).to eq "Touched in at #{station}."
+  # end
 
 end
